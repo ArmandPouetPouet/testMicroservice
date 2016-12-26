@@ -19,8 +19,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 //UserList Get all users
 func UserList(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	w = BuildJSONResponse(w, http.StatusOK)
 	if err := json.NewEncoder(w).Encode(Data.GetUsers()); err != nil {
 		panic(err)
 	}
@@ -30,7 +29,10 @@ func UserList(w http.ResponseWriter, r *http.Request) {
 func User(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	todoID := vars["todoId"]
-	index, _ := strconv.Atoi(todoID)
+	index, err := strconv.Atoi(todoID)
+	if err != nil {
+		panic(err)
+	}
 	json.NewEncoder(w).Encode(Data.GetUser(index))
 }
 
@@ -45,16 +47,14 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if err := json.Unmarshal(body, &user); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
+		w = BuildJSONResponse(w, 422)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
 	}
 
 	t := Data.CreateUser(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
+	w = BuildJSONResponse(w, http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
 		panic(err)
 	}
