@@ -7,7 +7,7 @@ var Users []User
 
 //InitUsers int users
 func InitUsers() []User {
-	Users = []User{User{"Martin", "Ladeveze", 4}, User{"Antoine", "Ladeveze", 2}}
+	Users = []User{User{"Martin", "Ladeveze", 4, "martin", "KatchaKatcha"}, User{"Antoine", "Ladeveze", 2, "toinou", "cacaboudin"}}
 	return Users
 }
 
@@ -33,4 +33,15 @@ func GetUsers() []User {
 func CreateUser(user User) User {
 	Users = append(Users, user)
 	return Users[len(Users)-1]
+}
+
+//LoginUser find which user match credentials
+func LoginUser(login, pwd string) User {
+	for _, user := range Users {
+		log.Output(0, login+" "+pwd)
+		if user.Login == login && user.Password == pwd {
+			return user
+		}
+	}
+	return User{"", "", 1, "", ""} //panic("User non trouvé")
 }

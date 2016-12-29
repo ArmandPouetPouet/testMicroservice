@@ -15,8 +15,31 @@ func NewRouter() *mux.Router {
 
 		handler = route.HandlerFunc
 
-		handler = GetTokenHandler(handler, route.Name)
+		if route.IsSecured {
+			handler = CheckTokenInCookieHandler(handler, route.Name)
+		}
+
 		handler = Logger(handler, route.Name)
+
+		router.
+			Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(handler)
+	}
+
+	return router
+}
+
+//SecureRouter router with credentials checking
+func SecureRouter(router *mux.Router) *mux.Router {
+
+	for _, route := range routes {
+		var handler http.Handler
+
+		handler = route.HandlerFunc
+
+		handler = CheckTokenInCookieHandler(handler, route.Name)
 
 		router.
 			Methods(route.Method).

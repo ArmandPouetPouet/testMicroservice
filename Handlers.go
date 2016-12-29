@@ -12,9 +12,24 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//Index zpouet
+//Index describe service
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome!")
+	fmt.Fprintln(w, "Welcome to this test service to access users. Don't forget to login first !")
+}
+
+//LoginUser check entered credentials and set cookie
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	login := vars["login"]
+	pwd := vars["password"]
+
+	if CheckCredentials(w, r, login, pwd) {
+		fmt.Fprintln(w, "Hello user !")
+	} else {
+		fmt.Fprintln(w, "Not authorized !")
+	}
+
 }
 
 //UserList Get all users
@@ -28,8 +43,8 @@ func UserList(w http.ResponseWriter, r *http.Request) {
 //User Get one user
 func User(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	todoID := vars["todoId"]
-	index, err := strconv.Atoi(todoID)
+	userID := vars["userId"]
+	index, err := strconv.Atoi(userID)
 	if err != nil {
 		panic(err)
 	}
