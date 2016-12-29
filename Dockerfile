@@ -1,17 +1,14 @@
-FROM golang:1.7
+FROM golang:latest
 
-# Create the directory where the application will reside
-RUN mkdir /ms
+ADD . /go/src/testMicroservice
+WORKDIR /go/src/testMicroservice
+RUN go get github.com/gorilla/mux
+RUN go get github.com/dgrijalva/jwt-go
 
-# Copy the application files (needed for production)
-ADD testMicroservice /ms/testMicroservice
+RUN go install testMicroservice
 
-# Set the working directory to the app directory
-WORKDIR /ms
+ENTRYPOINT /go/bin/testMicroservice
 
-# Expose the application on port 8080.
-# This should be the same as in the app.conf file
 EXPOSE 8080
 
-# Set the entry point of the container to the application executable
-ENTRYPOINT /ms/testMicroservice
+#docker run -d -p 127.0.0.1:8080:8080 testmicroservice 
